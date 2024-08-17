@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - CRM</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <!-- Popper.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="mt-4">Dashboard - CRM</h1>
+    
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages" aria-selected="true">Mensajes</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="products-tab" data-toggle="tab" href="#products" role="tab" aria-controls="products" aria-selected="false">Productos</a>
+      </li>
+    </ul>
+    
+    <div class="tab-content" id="myTabContent">
+      <!-- Messages Tab -->
+      <div class="tab-pane fade show active" id="messages" role="tabpanel" aria-labelledby="messages-tab">
+        <h2 class="mt-4">Mensajes</h2>
+        <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addMessageModal">
+          <i class="fas fa-plus"></i> Agregar Mensaje
+        </button>
+        <ul class="list-group" id="messagesList"></ul>
+      </div>
+    
+      <!-- Products Tab -->
+      <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="products-tab">
+        <h2 class="mt-4">Productos</h2>
+        <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addProductModal">
+          <i class="fas fa-plus"></i> Agregar Producto
+        </button>
+        <ul class="list-group" id="productsList">
+          <!-- Aquí se mostrarán las columnas -->
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><strong>Imagen</strong></span>
+            <span><strong>Nombre</strong></span>
+            <span><strong>Descripción</strong></span>
+            <span><strong>Categoría</strong></span>
+            <span><strong>Estado</strong></span>
+            <span><strong>Acciones</strong></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para agregar productos -->
+  <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addProductModalLabel">Agregar Producto</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="addProductForm">
+            <div class="form-group">
+              <label for="productTitle">Título</label>
+              <input type="text" class="form-control" id="productTitle" required>
+            </div>
+            <div class="form-group">
+              <label for="productName">Nombre</label>
+              <input type="text" class="form-control" id="productName" required>
+            </div>
+            <div class="form-group">
+              <label for="productAge">Edad</label>
+              <input type="number" class="form-control" id="productAge" required>
+            </div>
+            <div class="form-group">
+              <label for="productServices">Servicios Adicionales (separados por comas)</label>
+              <input type="text" class="form-control" id="productServices" required>
+            </div>
+            <div class="form-group">
+              <label for="productCategory">Categoría</label>
+              <select class="form-control" id="productCategory" required>
+                <option value="top">Top</option>
+                <option value="header">Header</option>
+                <option value="aside">Aside</option>
+                <option value="vip">VIP</option>
+                <option value="grid">Grid</option>
+                <option value="general">General</option>
+                <option value="comun">Comun</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="productState">Estado</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="productState">
+                <label class="form-check-label" for="productState">Activo</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="productDescription">Descripción</label>
+              <textarea class="form-control" id="productDescription" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="productImages">Imágenes del Producto (máx. 10)</label>
+              <input type="file" class="form-control-file" id="productImages" accept="image/*" multiple required>
+            </div>
+            <div class="form-group">
+              <label>Selecciona la imagen principal</label>
+              <div id="imagePreviewContainer" class="d-flex flex-wrap"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Producto</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para mostrar producto -->
+  <div class="modal fade" id="showProductModal" tabindex="-1" aria-labelledby="showProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="showProductModalLabel">Detalles del Producto</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="showProductImage"></div>
+          <h3 id="showProductTitle"></h3>
+          <p id="showProductDescription"></p>
+          <p><strong>Categoría:</strong> <span id="showProductCategory"></span></p>
+          <p><strong>Estado:</strong> <span id="showProductState"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para editar producto -->
+  <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editProductModalLabel">Editar Producto</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="editProductForm">
+            <input type="hidden" id="editProductId">
+            <div class="form-group">
+              <label for="editProductTitle">Título</label>
+              <input type="text" class="form-control" id="editProductTitle" required>
+            </div>
+            <div class="form-group">
+              <label for="editProductName">Nombre</label>
+              <input type="text" class="form-control" id="editProductName" required>
+            </div>
+            <div class="form-group">
+              <label for="editProductAge">Edad</label>
+              <input type="number" class="form-control" id="editProductAge" required>
+            </div>
+            <div class="form-group">
+              <label for="editProductServices">Servicios Adicionales (separados por comas)</label>
+              <input type="text" class="form-control" id="editProductServices" required>
+            </div>
+            <div class="form-group">
+              <label for="editProductCategory">Categoría</label>
+              <select class="form-control" id="editProductCategory" required>
+                <option value="top">Top</option>
+                <option value="header">Header</option>
+                <option value="aside">Aside</option>
+                <option value="vip">VIP</option>
+                <option value="grid">Grid</option>
+                <option value="general">General</option>
+                <option value="comun">Comun</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editProductState">Estado</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="editProductState">
+                <label class="form-check-label" for="editProductState">Activo</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="editProductDescription">Descripción</label>
+              <textarea class="form-control" id="editProductDescription" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+              <label>Imágenes actuales</label>
+              <div id="editProductImagesContainer" class="d-flex flex-wrap"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para agregar mensajes -->
+  <div class="modal fade" id="addMessageModal" tabindex="-1" aria-labelledby="addMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addMessageModalLabel">Agregar Mensaje</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="addMessageForm">
+            <div class="form-group">
+              <label for="messageName">Nombre</label>
+              <input type="text" class="form-control" id="messageName" required>
+            </div>
+            <div class="form-group">
+              <label for="messageEmail">Correo Electrónico</label>
+              <input type="email" class="form-control" id="messageEmail" required>
+            </div>
+            <div class="form-group">
+              <label for="messagePhone">Teléfono</label>
+              <input type="text" class="form-control" id="messagePhone" required>
+            </div>
+            <div class="form-group">
+              <label for="messageTitle">Título</label>
+              <input type="text" class="form-control" id="messageTitle" required>
+            </div>
+            <div class="form-group">
+              <label for="messageContent">Mensaje</label>
+              <textarea class="form-control" id="messageContent" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Mensaje</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para editar mensaje -->
+  <div class="modal fade" id="editMessageModal" tabindex="-1" aria-labelledby="editMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editMessageModalLabel">Editar Mensaje</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="editMessageForm">
+            <input type="hidden" id="editMessageId">
+            <div class="form-group">
+              <label for="editMessageName">Nombre</label>
+              <input type="text" class="form-control" id="editMessageName" required>
+            </div>
+            <div class="form-group">
+              <label for="editMessageEmail">Correo Electrónico</label>
+              <input type="email" class="form-control" id="editMessageEmail" required>
+            </div>
+            <div class="form-group">
+              <label for="editMessagePhone">Teléfono</label>
+              <input type="text" class="form-control" id="editMessagePhone" required>
+            </div>
+            <div class="form-group">
+              <label for="editMessageTitle">Título</label>
+              <input type="text" class="form-control" id="editMessageTitle" required>
+            </div>
+            <div class="form-group">
+              <label for="editMessageContent">Mensaje</label>
+              <textarea class="form-control" id="editMessageContent" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase y jQuery -->
+  <script type="module" src="firebaseConfig.js"></script>
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>

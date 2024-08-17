@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - CRM</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="login">
+      <h2 class="login__title">Iniciar Sesión</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email" class="login__label">Correo Electrónico</label>
+          <input type="email" class="form-control login__input" id="email" placeholder="Ingresa tu correo" required>
+        </div>
+        <div class="form-group">
+          <label for="password" class="login__label">Contraseña</label>
+          <input type="password" class="form-control login__input" id="password" placeholder="Ingresa tu contraseña" required>
+        </div>
+        <button type="submit" class="btn btn-primary login__button">Iniciar Sesión</button>
+      </form>
+      <div id="loginError" class="alert alert-danger mt-3" style="display: none;"></div>
+    </div>
+  </div>
+
+  <!-- Cargar jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  
+  <!-- Declarar los scripts como módulos -->
+  <script type="module" src="firebaseConfig.js"></script>
+  <script type="module" src="login.js"></script>
+</body>
+</html>
