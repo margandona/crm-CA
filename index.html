@@ -4,38 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplicación</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Usar archivos CSS y JS minificados para mejorar la carga -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+    
+    <!-- Preconectar recursos externos para optimizar la carga de recursos -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <!-- Evitar bloqueos con el atributo defer en scripts que no son esenciales -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" defer></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
+
+    <!-- Optimización del rendimiento con lazy loading de imágenes -->
     <style>
         body {
             background: linear-gradient(to right, #f9f9f9, #e0e0e0);
+            font-family: Arial, sans-serif; /* Definir una tipografía segura */
         }
+
+        /* Optimización del tamaño de la imagen y elementos del hero section */
         .navbar, .footer, .card {
             background-color: #f2e9e4;
         }
+
         .hero-section {
             background: linear-gradient(to right, #a1c4fd, #c2e9fb);
         }
+
         .hero-section__form-control, .hero-section__btn {
             background-color: #fff0f5;
         }
+
         .card__img {
             width: 100%;
             height: 200px;
             object-fit: cover;
         }
+
         .footer {
             padding: 20px;
         }
+
         .footer__title {
             font-size: 1.5rem;
         }
+
         .carousel-item img {
             width: 100%;
             height: 400px;
             object-fit: cover;
+        }
+
+        /* Mejoras de diseño responsivo */
+        @media (max-width: 768px) {
+            .card__img {
+                height: 150px;
+            }
+            .navbar-nav {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .footer__title {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
@@ -53,8 +88,8 @@
             <li class="navbar__item nav-item"><a class="navbar__link nav-link" href="#"><i class="fas fa-info"></i> Opción 2</a></li>
             <li class="navbar__item nav-item"><a class="navbar__link nav-link" href="#"><i class="fas fa-cogs"></i> Opción 3</a></li>
             <li class="navbar__item nav-item"><a class="navbar__link nav-link" href="#"><i class="fas fa-envelope"></i> Opción 4</a></li>
-            <li class="navbar__item nav-item"><a class="navbar__link nav-link" href="login.html"><i class="fas fa-envelope"></i> Login</a></li>
-            <li class="navbar__item nav-item"><a class="navbar__link nav-link" target="_blank" href="https://virtual.neekworld.cl/moodle41/login/index.php"><i class="fas fa-envelope"></i>Aula Virtual</a></li>
+            <li class="navbar__item nav-item"><a class="navbar__link nav-link" href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            <li class="navbar__item nav-item"><a class="navbar__link nav-link" target="_blank" href="https://virtual.neekworld.cl/moodle41/login/index.php"><i class="fas fa-school"></i> Aula Virtual</a></li>
         </ul>
     </div>
 </nav>
@@ -65,10 +100,10 @@
         <div class="row">
             <div class="col-md-6">
                 <form id="messageForm">
-                    <!--formulario que responde a mensajesCRM-->
+                    <!-- Formulario con validación de HTML5 y campos accesibles -->
                     <div class="hero-section__form-group form-group">
                         <label for="name">Nombre</label>
-                        <input type="text" class="hero-section__form-control form-control" id="name" placeholder="Ingresa tu nombre" required>
+                        <input type="text" class="hero-section__form-control form-control" id="name" placeholder="Ingresa tu nombre" required pattern="[A-Za-z ]+" title="Solo letras permitidas">
                     </div>
                     <div class="hero-section__form-group form-group">
                         <label for="email">Correo electrónico</label>
@@ -90,15 +125,15 @@
                 </form>
             </div>
             <div class="col-md-6 d-flex flex-column justify-content-center align-items-center">
-                <!-- Sección dinámica de la categoría "aside" -->
-                <img src="https://via.placeholder.com/300" class="hero-section__img img-fluid" alt="Imagen Principal">
+                <!-- Imagen con carga diferida (lazy loading) para mejorar rendimiento -->
+                <img src="https://via.placeholder.com/300" loading="lazy" class="hero-section__img img-fluid" alt="Imagen Principal">
                 <h2 class="hero-section__motto mt-3">Sección Categoría Aside</h2>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Carrusel de la categoría "header" -->
+<!-- Carrusel de la categoría "header" con imágenes -->
 <div id="heroCarousel" class="hero-carousel carousel slide" data-ride="carousel">
     <div class="carousel-inner">
         <!-- Las imágenes de los productos se cargarán aquí -->
@@ -137,7 +172,7 @@
     </div>
 </div>
 
-<!-- Footer Section -->
+<!-- Footer Section con accesibilidad mejorada -->
 <footer class="footer">
     <div class="container">
         <div class="row">
@@ -155,18 +190,22 @@
                 </ul>
             </div>
             <div class="col-md-4">
-                <img src="https://via.placeholder.com/200" class="footer__map img-fluid" alt="Mapa">
+                <img src="https://via.placeholder.com/200" loading="lazy" class="footer__map img-fluid" alt="Mapa de ubicación">
             </div>
         </div>
     </div>
 </footer>
 
+<!-- JavaScript para habilitar tooltips y cargar Firebase -->
 <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
+        // Inicializar tooltips
         $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
-<script type="module" src="firebaseConfig.js"></script>
-<script type="module" src="app.js"></script>
+
+<!-- Carga diferida de módulos para mejorar rendimiento -->
+<script type="module" defer src="firebaseConfig.js"></script>
+<script type="module" defer src="app.js"></script>
 </body>
 </html>

@@ -1,41 +1,102 @@
 import { getAuth, onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, getDoc, updateDoc, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
-import { getFirestore, addDoc, collection, serverTimestamp, getDocs, deleteDoc, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 // Inicializar Auth, Firestore y Storage
 const auth = getAuth();
 const db = getFirestore();
 const storage = getStorage();
 
-// Verificar si el usuario está autenticado
+// Email del superadministrador
+const adminEmail = "m.argando@gmail.com";
+
+// Verificar si el usuario está autenticado y cargar el perfil y las funcionalidades según su rol
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    loadUserProfile(user.uid); // Cargar perfil si el usuario está autenticado
-    loadMessages();
-    loadProducts();
+    checkUserRole(user); // Verificar el rol del usuario
+    loadUserProfile(user.uid); // Cargar el perfil del usuario autenticado
+    loadMessages();  // Cargar mensajes
+    loadProducts();  // Cargar productos
   } else {
     window.location.href = 'index.html';  // Redirige al login si no está autenticado
   }
 });
 
-// Cargar datos del perfil del usuario
-async function loadUserProfile(uid) {
-  const userDoc = await getDoc(doc(db, 'users', uid));
-  if (userDoc.exists()) {
-    const userData = userDoc.data();
-    $('#profileEmail').text(userData.email || auth.currentUser.email);
-    $('#profileFirstName').text(userData.firstName);
-    $('#profileLastName').text(userData.lastName);
-    $('#profileBirthdate').text(userData.birthdate);
-    $('#profileAddress').text(userData.address);
-    $('#profileCity').text(userData.city);
-    $('#profileCountry').text(userData.country);
-    $('#profileGender').text(userData.gender);
-    $('#profileNationality').text(userData.nationality);
+// Verificar el rol del usuario y mostrar la pestaña de gestión de usuarios si es administrador
+async function checkUserRole(user) {
+  try {
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      if (userData.role === "admin" || user.email === adminEmail) {
+        document.getElementById("adminTab").style.display = "block"; // Mostrar la pestaña de Gestión de Usuarios para administradores
+        loadAllUsers();  // Cargar la lista de usuarios para la gestión de roles
+      }
+    }
+  } catch (error) {
+    console.error("Error al verificar el rol del usuario:", error);
   }
 }
 
-// Editar perfil
+// Cargar la lista de todos los usuarios (para el administrador)
+async function loadAllUsers() {
+  try {
+    const usersCollection = collection(db, "users");
+    const querySnapshot = await getDocs(usersCollection);
+    const userList = document.getElementById("user-list");
+    userList.innerHTML = "";  // Limpiar la lista de usuarios
+
+    querySnapshot.forEach((doc) => {
+      const user = doc.data();
+      const listItem = `
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>${user.email} - <strong>${user.role}</strong></span>
+          <button class="btn btn-warning btn-sm" onclick="editUserRole('${doc.id}', '${user.role}')">Editar Rol</button>
+        </li>`;
+      userList.innerHTML += listItem;  // Agregar usuarios a la lista
+    });
+  } catch (error) {
+    console.error("Error cargando la lista de usuarios:", error);
+  }
+}
+
+// Función para editar el rol de un usuario (solo accesible para administradores)
+window.editUserRole = async function (userId, currentRole) {
+  const newRole = prompt("Ingresa el nuevo rol para el usuario:", currentRole);
+  if (newRole && newRole !== currentRole) {
+    try {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, { role: newRole });
+      loadAllUsers();  // Recargar la lista de usuarios después de actualizar el rol
+      alert("Rol actualizado con éxito.");
+    } catch (error) {
+      console.error("Error actualizando el rol del usuario:", error);
+    }
+  }
+};
+
+// Cargar datos del perfil del usuario autenticado
+async function loadUserProfile(uid) {
+  try {
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      $('#profileEmail').text(userData.email || auth.currentUser.email);
+      $('#profileFirstName').text(userData.firstName);
+      $('#profileLastName').text(userData.lastName);
+      $('#profileBirthdate').text(userData.birthdate);
+      $('#profileAddress').text(userData.address);
+      $('#profileCity').text(userData.city);
+      $('#profileCountry').text(userData.country);
+      $('#profileGender').text(userData.gender);
+      $('#profileNationality').text(userData.nationality);
+    }
+  } catch (error) {
+    console.error("Error cargando el perfil del usuario:", error);
+  }
+}
+
+// Función para editar perfil
 $('#editProfileBtn').on('click', async function () {
   const user = auth.currentUser;
   const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -54,7 +115,7 @@ $('#editProfileBtn').on('click', async function () {
   $('#editProfileModal').modal('show');
 });
 
-// Guardar cambios del perfil
+// Guardar cambios del perfil del usuario
 $('#editUserForm').on('submit', async function (e) {
   e.preventDefault();
 
@@ -87,7 +148,7 @@ $('#editUserForm').on('submit', async function (e) {
   }
 });
 
-// Cambiar contraseña
+// Cambiar contraseña del usuario
 $('#changePasswordBtn').on('click', function () {
   $('#changePasswordModal').modal('show');
 });
@@ -119,7 +180,7 @@ $('#savePasswordChanges').on('click', async function () {
   }
 });
 
-// Confirmación antes de eliminar
+// Confirmación antes de eliminar un mensaje o producto
 async function confirmAndDelete(id, collectionType) {
   if (confirm("¿Estás seguro de que deseas eliminar este elemento?")) {
     await deleteDoc(doc(db, collectionType, id));
@@ -200,8 +261,6 @@ $(document).on('click', '.btn-show', async function () {
     console.error("Error mostrando el producto:", error);
   }
 });
-
-// Editar producto y otras funciones existentes para mensajes, agregar productos, etc.
 
 // Cargar mensajes y productos al inicio
 $(document).ready(() => {

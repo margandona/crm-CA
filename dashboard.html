@@ -25,6 +25,9 @@
   <div class="container">
     <h1 class="mt-4">Dashboard - CRM</h1>
     
+    <!-- Botón de Cierre de Sesión -->
+    <button id="logoutBtn" class="btn btn-danger float-right">Cerrar Sesión</button>
+
     <!-- Tab Navigation -->
     <ul class="nav nav-tabs" id="myTab" role="tablist">
       <li class="nav-item">
@@ -35,6 +38,9 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" id="products-tab" data-toggle="tab" href="#products" role="tab" aria-controls="products" aria-selected="false">Productos</a>
+      </li>
+      <li class="nav-item" id="adminTab" style="display: none;">
+        <a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users" aria-selected="false">Gestión de Usuarios</a>
       </li>
     </ul>
     
@@ -82,6 +88,15 @@
             <span><strong>Estado</strong></span>
             <span><strong>Acciones</strong></span>
           </li>
+        </ul>
+      </div>
+
+      <!-- Users Tab (Visible solo para Administradores) -->
+      <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+        <h2 class="mt-4">Gestión de Usuarios</h2>
+        <button class="btn btn-primary mb-3" id="addUserBtn">Agregar Usuario</button>
+        <ul class="list-group" id="user-list">
+          <!-- Lista de usuarios cargada dinámicamente -->
         </ul>
       </div>
     </div>
@@ -158,5 +173,19 @@
   <!-- Firebase y jQuery -->
   <script type="module" src="firebaseConfig.js"></script>
   <script type="module" src="dashboard.js"></script>
+  <script type="module" src="role-management.js"></script>
+
+  <script>
+    // Agregar la funcionalidad del botón de agregar usuario
+    document.getElementById('addUserBtn').addEventListener('click', () => {
+      addUser();  // Asegurarse de que addUser está definida en role-management.js
+    });
+
+    // Función de cierre de sesión
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      logout();  // Asegurarse de que logout está definida en role-management.js
+    });
+    
+  </script>
 </body>
 </html>
